@@ -1,0 +1,155 @@
+"---------------------------------------------------------------------------
+" ここからが自分で追加した設定
+"---------------------------------------------------------------------------
+" 行番号を表示
+set number
+
+"---------------------------------------------------------------------------
+" タブ幅を4に設定
+set tabstop=4
+
+"---------------------------------------------------------------------------
+" syntaxを設定
+syntax on
+
+"---------------------------------------------------------------------------
+"全角スペースをハイライト表示
+function! ZenkakuSpace()
+    highlight ZenkakuSpace cterm=reverse ctermfg=DarkMagenta gui=reverse guifg=DarkMagenta
+endfunction
+
+if has('syntax')
+    augroup ZenkakuSpace
+        autocmd!
+        autocmd ColorScheme       * call ZenkakuSpace()
+        autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+    augroup END
+    call ZenkakuSpace()
+endif
+
+"---------------------------------------------------------------------------
+"保存時に行末の空白を除去する
+autocmd BufWritePre * :%s/\s\+$//ge
+
+"---------------------------------------------------------------------------
+" 括弧の対応をハイライト
+set showmatch
+
+"---------------------------------------------------------------------------
+" カラースキーマを設定
+colorscheme moriarty
+
+"---------------------------------------------------------------------------
+" F5キー押下でコンパイル&実行をするよう設定
+
+"実行コマンド
+command! Run call s:Run()
+nmap <F5> :Run<CR>
+function! s:Run()
+  let e = expand("%:e")
+  if e == "c"
+    :Gcc
+  endif
+  if e == "py"
+    :Python
+  endif
+  if e == "f90" || e == "f95"
+    :Gfortran
+  endif
+endfunction
+
+command! Python call s:Python()
+function! s:Python()
+  :!python %
+endfunction
+
+command! Gcc call s:Gcc()
+function! s:Gcc()
+  if has("win32") || has("win64")
+    :!gcc % -o %:r.exe
+    :!%:r.exe
+  else
+    :!gcc % -o %:r.out
+    :!%:r.out
+  endif
+endfunction
+
+command! Gfortran call s:Gfortran()
+function! s:Gfortran()
+  if has("win32") || has("win64")
+    :!gfortran % -o %:r.exe
+    :!%:r.exe
+  else
+    :!gfortran % -o %:r.out
+    :!%:r.out
+  endif
+endfunction
+
+"---------------------------------------------------------------------------
+" 文字コード・改行コードを設定
+set fileencoding=utf-8
+set fileformat=dos
+
+"---------------------------------------------------------------------------
+" 行の折り返しをしない
+set nowrap
+
+"---------------------------------------------------------------------------
+" メニューを非表示
+set guioptions-=m
+set guioptions-=T
+
+"---------------------------------------------------------------------------
+" ごみファイルを無視
+set noswapfile
+set nobackup
+set noundofile
+
+"---------------------------------------------------------------------------
+" tabなどを可視化
+" set list
+set listchars=tab:>.,trail:_,eol:/,extends:>,precedes:<,nbsp:%
+
+"---------------------------------------------------------------------------
+" カーソル行ハイライト
+set cursorline
+
+"---------------------------------------------------------------------------
+" アンダーラインを引く
+" highlight CursorLine gui=underline guifg=NONE guibg=NONE
+
+"---------------------------------------------------------------------------
+" 外部grep設定
+set grepprg=findstr\ /n
+
+"---------------------------------------------------------------------------
+" 検索設定
+set incsearch    "インクリメンタルサーチを行う
+set hlsearch    "検索結果をハイライトする
+set ignorecase    "検索時に文字の大小を区別しない
+set smartcase    "検索時に大文字を含んでいたら大小を区別する
+set wrapscan    "検索をファイルの先頭へループする
+
+"---------------------------------------------------------------------------
+" 検索結果を自動で表示する
+autocmd QuickFixCmdPost *grep* cwindow
+
+"---------------------------------------------------------------------------
+" 自動インデント無効
+set noautoindent
+set nosmartindent
+
+"---------------------------------------------------------------------------
+" 自動改行OFF
+set formatoptions=q
+
+"---------------------------------------------------------------------------
+" 透明化
+"set transparency=220
+
+"---------------------------------------------------------------------------
+" 半角文字の設定
+set guifont=MS_Gothic:h11
+" 全角文字の設定
+set guifontwide=MS_Gothic:h11
+
